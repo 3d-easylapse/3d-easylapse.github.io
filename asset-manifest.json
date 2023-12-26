@@ -1,12 +1,15 @@
 {
   "files": {
-    "main.js": "/static/js/main.9ca3f9b3.js",
+    "main.js": "/static/js/main.a0249379.js",
+    "static/js/845.545d01e8.chunk.js": "/static/js/845.545d01e8.chunk.js",
     "static/js/787.77b3d44a.chunk.js": "/static/js/787.77b3d44a.chunk.js",
+    "static/media/iphone-screenshot.mp3": "/static/media/iphone-screenshot.e36f380a80b29e9ce125.mp3",
     "index.html": "/index.html",
-    "main.9ca3f9b3.js.map": "/static/js/main.9ca3f9b3.js.map",
+    "main.a0249379.js.map": "/static/js/main.a0249379.js.map",
+    "845.545d01e8.chunk.js.map": "/static/js/845.545d01e8.chunk.js.map",
     "787.77b3d44a.chunk.js.map": "/static/js/787.77b3d44a.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.9ca3f9b3.js"
+    "static/js/main.a0249379.js"
   ]
 }
