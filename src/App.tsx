@@ -1,106 +1,46 @@
-import React from 'react';
-import VideoWrapper from './VideoWrapper';
-import Detector from './Detector';
-import JSZip from 'jszip';
+import React, { ChangeEvent } from 'react';
+import CustomTimelapse from './CustomTimelapse';
 
 function App() {
-  const [video, setVideo] = React.useState<HTMLVideoElement>();
-  const [stream, setStream] = React.useState<MediaStream>();
-  const [hasStarted, setHasStarted] = React.useState(false);
+  const [steps, setSteps] = React.useState(1);
+  const [file, setFile] = React.useState<File>();
 
-  const [isReady, setIsReady] = React.useState(false);
-  const [timerToGetReady, setMovingApprovalTimer] =
-    React.useState<NodeJS.Timeout>();
-  const [timerToTakePhoto, setStoppedApprovalTimer] =
-    React.useState<NodeJS.Timeout>();
-
-  const [images, setImages] = React.useState<string[]>([]);
-
-  const onStartMoving = () => {
-    if (timerToGetReady) return;
-
-    clearTimeout(timerToTakePhoto);
-    setStoppedApprovalTimer(undefined);
-
-    setMovingApprovalTimer(
-      setTimeout(() => {
-        setIsReady(true);
-      }, 1000),
-    );
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    setFile(event.target.files![0]);
   };
 
-  const onStopMoving = () => {
-    if (timerToTakePhoto) return;
+  const handleDownload = async () => {
+    if (file) {
+      const gcode = await file.text();
+      const modifiedGcode = new CustomTimelapse().execute(gcode);
+      const blob = new Blob([modifiedGcode], { type: 'plain/text' });
 
-    clearTimeout(timerToGetReady);
-    setMovingApprovalTimer(undefined);
-
-    if (!isReady) return;
-
-    setStoppedApprovalTimer(
-      setTimeout(() => {
-        if (!hasStarted) return;
-
-        if (!video) return;
-
-        const canvas = document.createElement('canvas');
-        canvas.setAttribute('width', video.videoWidth.toString());
-        canvas.setAttribute('height', video.videoWidth.toString());
-
-        const ctx = canvas.getContext('2d')!;
-        ctx.drawImage(video, 0, 0);
-
-        setImages((images) => [...images, canvas.toDataURL()]);
-
-        console.log('Taking photo!');
-      }, 3000),
-    );
-  };
-
-  const onStart = () => {
-    setHasStarted(true);
-  };
-
-  const onStop = () => {
-    setHasStarted(false);
-
-    const zip = new JSZip();
-    images.forEach((image) => {
-      zip.file(
-        Date.now().toString() + '.png',
-        image.substring(image.indexOf(',') + 1),
-        {
-          base64: true,
-        },
-      );
-    });
-    zip.generateAsync({ type: 'blob' }).then((zip) => {
-      const blobUrl = window.URL.createObjectURL(zip);
-      const anchor = window.document.createElement('a');
-      anchor.download = 'Time-lapse.zip';
-      anchor.href = blobUrl;
-      anchor.click();
-      window.URL.revokeObjectURL(blobUrl);
-    });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'modified_file.gcode');
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    }
   };
 
   return (
     <div>
-      <VideoWrapper
-        videoRef={(video) => setVideo(video)}
-        onStreamChange={(stream) => setStream(stream)}
+      <label htmlFor="points">Steps:</label>
+      <input
+        type="number"
+        id="points"
+        name="points"
+        value={steps}
+        min={1}
+        onChange={(x) => {
+          setSteps(parseInt(x.target.value));
+        }}
       />
-      <Detector
-        video={video}
-        stream={stream}
-        onStartMoving={onStartMoving}
-        onStopMoving={onStopMoving}
-      />
-      <button disabled={hasStarted} onClick={onStart}>
-        Start
-      </button>
-      <button disabled={!hasStarted} onClick={onStop}>
-        Stop
+      <input type="file" onChange={handleFileUpload} />
+      <button onClick={handleDownload} disabled={!file}>
+        Download Modified File
       </button>
     </div>
   );
