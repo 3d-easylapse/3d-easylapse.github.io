@@ -1,7 +1,19 @@
+export interface TimelapseSettings {
+  readonly bedLength: number;
+  readonly pauseLengthMs: number;
+  readonly enableCustomReturnSpeed: boolean;
+  readonly returnSpeedMmPerMin: number;
+  readonly enableRetraction: boolean;
+  readonly retractionDistanceMm: number;
+  readonly displayPhotoNumber: boolean;
+  readonly sendPhotoCommand: boolean;
+  readonly triggerCommand: string;
+}
+
 /**
  * This code was translated from github.com/simonjamain/CustomTimelapseCuraPlugin
  */
-export default class CustomTimelapse {
+export class CustomTimelapse {
   /**
    * From https://github.com/Ultimaker/Cura/blob/0fe682470a53ea22c6f617d17f13e23fe49d8f57/scripts/line_length_checker.py#L4C1-L4C5
    */
@@ -60,17 +72,7 @@ export default class CustomTimelapse {
     return layers.map((layer) => layer.join('\n'));
   }
 
-  execute(gcode: string) {
-    const activate_plugin = true;
-    const pause_length = 5;
-    const enable_custom_return_speed = false;
-    const return_speed = 0;
-    const enable_retraction = true;
-    const retraction_distance = 5;
-    const display_photo_number = false;
-    const send_photo_command = false;
-    const trigger_command = 'M240';
-
+  execute(gcode: string, props: TimelapseSettings) {
     const data = this.gcodeToLayers(gcode);
 
     data.forEach((layer, layerIndex) => {
@@ -89,53 +91,53 @@ export default class CustomTimelapse {
 
           let gcode_to_append = '';
 
-          if (activate_plugin) {
-            gcode_to_append += ';CustomTimelapse Begin\n';
+          gcode_to_append += ';CustomTimelapse Begin\n';
 
-            if (display_photo_number) {
-              gcode_to_append += 'M117 Taking photo ' + layerIndex + '...\n';
-            }
-
-            gcode_to_append += '; STEP 1 : retraction\n';
-            gcode_to_append +=
-              'M83' +
-              ' ; switch to relative E values for any needed retraction\n';
-            if (enable_retraction) {
-              gcode_to_append += `G1 F1800 E${-retraction_distance};Retraction\n`;
-            }
-            gcode_to_append += 'M82;Switch back to absolute E values\n';
-
-            gcode_to_append += '; STEP 2 : Move the head up a bit\n';
-            gcode_to_append += 'G91;Switch to relative positioning\n';
-            gcode_to_append += 'G0 Z1;Move Z axis up a bit\n';
-            gcode_to_append += 'G90;Switch back to absolute positioning\n';
-
-            gcode_to_append +=
-              '; STEP 3 : Move the head to "display" position and wait\n';
-            gcode_to_append += 'G0 X0 Y110;GCODE for the display position\n';
-            gcode_to_append += 'M400;Wait for moves to finish\n';
-            gcode_to_append += `G4 S${pause_length};Wait for camera\n`;
-
-            gcode_to_append += '; STEP 4 : send photo trigger command if set\n';
-            if (send_photo_command) {
-              gcode_to_append += trigger_command + ' ;Snap Photo\n';
-            }
-
-            gcode_to_append +=
-              '; STEP 5 : Move the head back in its original place\n';
-            if (enable_custom_return_speed) {
-              gcode_to_append += `G0 X${x} Y${y} F${return_speed}\n`;
-            } else {
-              gcode_to_append += `G0 X${x} Y${y}\n`;
-            }
-
-            gcode_to_append += '; STEP 6 : Move the head height back down\n';
-            gcode_to_append += 'G91;Switch to relative positioning\n';
-            gcode_to_append += 'G0 Z-1;Restore Z axis position\n';
-            gcode_to_append += 'G90;Switch back to absolute positioning\n';
-
-            gcode_to_append += ';CustomTimelapse End\n';
+          if (props.displayPhotoNumber) {
+            gcode_to_append += 'M117 Taking photo ' + layerIndex + '...\n';
           }
+
+          gcode_to_append += '; STEP 1 : retraction\n';
+          gcode_to_append +=
+            'M83' +
+            ' ; switch to relative E values for any needed retraction\n';
+          if (props.enableRetraction) {
+            gcode_to_append += `G1 F1800 E${-props.retractionDistanceMm};Retraction\n`;
+          }
+          gcode_to_append += 'M82;Switch back to absolute E values\n';
+
+          gcode_to_append += '; STEP 2 : Move the head up a bit\n';
+          gcode_to_append += 'G91;Switch to relative positioning\n';
+          gcode_to_append += 'G0 Z1;Move Z axis up a bit\n';
+          gcode_to_append += 'G90;Switch back to absolute positioning\n';
+
+          gcode_to_append +=
+            '; STEP 3 : Move the head to "display" position and wait\n';
+          gcode_to_append += `G0 X0 Y${
+            props.bedLength / 2
+          };GCODE for the display position\n`;
+          gcode_to_append += 'M400;Wait for moves to finish\n';
+          gcode_to_append += `G4 P${props.pauseLengthMs};Wait for camera\n`;
+
+          gcode_to_append += '; STEP 4 : send photo trigger command if set\n';
+          if (props.sendPhotoCommand) {
+            gcode_to_append += props.triggerCommand + ' ;Snap Photo\n';
+          }
+
+          gcode_to_append +=
+            '; STEP 5 : Move the head back in its original place\n';
+          if (props.enableCustomReturnSpeed) {
+            gcode_to_append += `G0 X${x} Y${y} F${props.returnSpeedMmPerMin}\n`;
+          } else {
+            gcode_to_append += `G0 X${x} Y${y}\n`;
+          }
+
+          gcode_to_append += '; STEP 6 : Move the head height back down\n';
+          gcode_to_append += 'G91;Switch to relative positioning\n';
+          gcode_to_append += 'G0 Z-1;Restore Z axis position\n';
+          gcode_to_append += 'G90;Switch back to absolute positioning\n';
+
+          gcode_to_append += ';CustomTimelapse End\n';
 
           layer += gcode_to_append;
           data[index] = layer;
