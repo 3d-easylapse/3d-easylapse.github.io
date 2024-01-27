@@ -164,7 +164,10 @@ function App() {
             fontFamily: 'Roboto',
           }}
         >
-          3D EasyLapse
+          <a href="https://github.com/3d-easylapse" style={{ color: 'white' }}>
+            {' '}
+            3D EasyLapse
+          </a>
         </h1>
       </div>
     </div>
