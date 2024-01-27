@@ -1,14 +1,11 @@
 export interface TimelapseSettings {
-  readonly yDisplayPos: number;
-  readonly pauseLengthMs: number;
-  readonly enableCustomReturnSpeed: boolean;
-  readonly returnSpeedMmPerMin: number;
-  readonly enableRetraction: boolean;
-  readonly retractionDistanceMm: number;
-  readonly retractionSpeedMmPerMin: number;
-  readonly displayPhotoNumber: boolean;
-  readonly sendPhotoCommand: boolean;
-  readonly triggerCommand: string;
+  readonly displayTime: number;
+  readonly displayPosX: number;
+  readonly displayPosY: number;
+
+  readonly retractionAmmount: number;
+  readonly retractionSpeedIn: number;
+  readonly retractionSpeedOut: number;
 }
 
 /**
@@ -75,6 +72,15 @@ export class CustomTimelapse {
 
   execute(gcode: string, props: TimelapseSettings) {
     const data = this.gcodeToLayers(gcode);
+    const {
+      displayTime,
+      displayPosX,
+      displayPosY,
+
+      retractionAmmount,
+      retractionSpeedIn,
+      retractionSpeedOut,
+    } = props;
 
     data.forEach((layer, layerIndex) => {
       if (layerIndex === data.length - 1) {
@@ -95,14 +101,14 @@ export class CustomTimelapse {
           toAppend += '; CustomTimelapse Begin\n';
 
           toAppend += 'G91; Relative movement for retraction\n';
-          toAppend += 'G0 E-5 F3000; Retract -5mm at 3000mm/min\n';
+          toAppend += `G0 E-${retractionAmmount} F${retractionSpeedOut}; Retract ${retractionAmmount} mm at ${retractionSpeedOut} mm/min\n`;
           toAppend += `G0 Z1 ; Move Z axis up a bit\n`;
           toAppend += 'G90; Absolute Positioning\n';
-          toAppend += 'G0 F9000 X110 Y200; Display position\n';
-          toAppend += 'G4 S2; Wait 2 seconds\n';
+          toAppend += `G0 F9000 X${displayPosX} Y${displayPosY}; Display position\n`;
+          toAppend += `G4 P${displayTime}; Wait ${displayTime} milliseconds\n`;
           toAppend += `G0 F9000 X${x} Y${y}; Next position\n`;
           toAppend += 'G91; Relative again for un-retraction\n';
-          toAppend += 'G0 E5 F2100; Un-Retract 5mm at 2100mm/min\n';
+          toAppend += `G0 E${retractionAmmount} F${retractionSpeedIn}; Un-Retract ${retractionAmmount}mm at ${retractionSpeedIn} mm/min\n`;
           toAppend += `G0 Z-1; Move Z axis down a bit\n`;
           toAppend += 'G90; Back to Absolute\n';
 
