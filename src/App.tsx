@@ -165,7 +165,6 @@ function App() {
           }}
         >
           <a href="https://github.com/3d-easylapse" style={{ color: 'white' }}>
-            {' '}
             3D EasyLapse
           </a>
         </h1>
