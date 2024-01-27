@@ -7,15 +7,16 @@ function App() {
   const [timelapseSettings, _setTimelapseSettings] =
     React.useState<TimelapseSettings>(
       JSON.parse(localStorage.getItem(timelapseSettingsKey) ?? 'null') ?? {
-        bedLength: 220,
+        yDisplayPos: 220,
 
         pauseLengthMs: 5000,
 
-        enableCustomReturnSpeed: false,
-        returnSpeedMmPerMin: 1500,
+        enableCustomReturnSpeed: true,
+        returnSpeedMmPerMin: 9000,
 
         enableRetraction: true,
-        retractionDistanceMm: 5,
+        retractionDistanceMm: 1,
+        retractionSpeedMmPerMin: 3000,
 
         displayPhotoNumber: false,
 
@@ -63,12 +64,12 @@ function App() {
       <input
         type="number"
         id="bed-length"
-        value={timelapseSettings.bedLength}
+        value={timelapseSettings.yDisplayPos}
         min={1}
         onChange={(el) => {
           setTimelapseSettings({
             ...timelapseSettings,
-            bedLength: el.target.valueAsNumber,
+            yDisplayPos: el.target.valueAsNumber,
           });
         }}
       />
@@ -145,6 +146,20 @@ function App() {
           setTimelapseSettings({
             ...timelapseSettings,
             retractionDistanceMm: el.target.valueAsNumber,
+          });
+        }}
+      />
+
+      <label htmlFor="retraction-speed">Retraction distance (mm/min): </label>
+      <input
+        disabled={!timelapseSettings.enableRetraction}
+        type="number"
+        id="retraction-speed"
+        value={timelapseSettings.retractionSpeedMmPerMin}
+        onChange={(el) => {
+          setTimelapseSettings({
+            ...timelapseSettings,
+            retractionSpeedMmPerMin: el.target.valueAsNumber,
           });
         }}
       />

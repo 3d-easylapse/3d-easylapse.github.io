@@ -1,10 +1,11 @@
 export interface TimelapseSettings {
-  readonly bedLength: number;
+  readonly yDisplayPos: number;
   readonly pauseLengthMs: number;
   readonly enableCustomReturnSpeed: boolean;
   readonly returnSpeedMmPerMin: number;
   readonly enableRetraction: boolean;
   readonly retractionDistanceMm: number;
+  readonly retractionSpeedMmPerMin: number;
   readonly displayPhotoNumber: boolean;
   readonly sendPhotoCommand: boolean;
   readonly triggerCommand: string;
@@ -86,60 +87,28 @@ export class CustomTimelapse {
         if (line.includes(';LAYER:')) {
           const index = data.indexOf(layer);
 
-          const next_layer = data[layerIndex + 1];
-          const [x, y] = this.getNextXY(next_layer);
+          const nextLayer = data[layerIndex + 1];
+          const [x, y] = this.getNextXY(nextLayer);
 
-          let gcode_to_append = '';
+          let toAppend = '';
 
-          gcode_to_append += ';CustomTimelapse Begin\n';
+          toAppend += '; CustomTimelapse Begin\n';
 
-          if (props.displayPhotoNumber) {
-            gcode_to_append += 'M117 Taking photo ' + layerIndex + '...\n';
-          }
+          toAppend += 'G91; Relative movement for retraction\n';
+          toAppend += 'G0 E-5 F3000; Retract -5mm at 3000mm/min\n';
+          toAppend += `G0 Z1 ; Move Z axis up a bit\n`;
+          toAppend += 'G90; Absolute Positioning\n';
+          toAppend += 'G0 F9000 X110 Y200; Display position\n';
+          toAppend += 'G4 S2; Wait 2 seconds\n';
+          toAppend += `G0 F9000 X${x} Y${y}; Next position\n`;
+          toAppend += 'G91; Relative again for un-retraction\n';
+          toAppend += 'G0 E5 F2100; Un-Retract 5mm at 2100mm/min\n';
+          toAppend += `G0 Z-1; Move Z axis down a bit\n`;
+          toAppend += 'G90; Back to Absolute\n';
 
-          gcode_to_append += '; STEP 1 : retraction\n';
-          gcode_to_append +=
-            'M83' +
-            ' ; switch to relative E values for any needed retraction\n';
-          if (props.enableRetraction) {
-            gcode_to_append += `G1 F1800 E${-props.retractionDistanceMm};Retraction\n`;
-          }
-          gcode_to_append += 'M82;Switch back to absolute E values\n';
+          toAppend += '; CustomTimelapse End\n';
 
-          gcode_to_append += '; STEP 2 : Move the head up a bit\n';
-          gcode_to_append += 'G91;Switch to relative positioning\n';
-          gcode_to_append += 'G0 Z1;Move Z axis up a bit\n';
-          gcode_to_append += 'G90;Switch back to absolute positioning\n';
-
-          gcode_to_append +=
-            '; STEP 3 : Move the head to "display" position and wait\n';
-          gcode_to_append += `G0 X0 Y${
-            props.bedLength / 2
-          };GCODE for the display position\n`;
-          gcode_to_append += 'M400;Wait for moves to finish\n';
-          gcode_to_append += `G4 P${props.pauseLengthMs};Wait for camera\n`;
-
-          gcode_to_append += '; STEP 4 : send photo trigger command if set\n';
-          if (props.sendPhotoCommand) {
-            gcode_to_append += props.triggerCommand + ' ;Snap Photo\n';
-          }
-
-          gcode_to_append +=
-            '; STEP 5 : Move the head back in its original place\n';
-          if (props.enableCustomReturnSpeed) {
-            gcode_to_append += `G0 X${x} Y${y} F${props.returnSpeedMmPerMin}\n`;
-          } else {
-            gcode_to_append += `G0 X${x} Y${y}\n`;
-          }
-
-          gcode_to_append += '; STEP 6 : Move the head height back down\n';
-          gcode_to_append += 'G91;Switch to relative positioning\n';
-          gcode_to_append += 'G0 Z-1;Restore Z axis position\n';
-          gcode_to_append += 'G90;Switch back to absolute positioning\n';
-
-          gcode_to_append += ';CustomTimelapse End\n';
-
-          layer += gcode_to_append;
+          layer += toAppend;
           data[index] = layer;
           break;
         }
