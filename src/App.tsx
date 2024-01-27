@@ -6,6 +6,8 @@ function App() {
   const extruderColor = 'grey';
   const extruderShadowColor = 'lime';
 
+  const limitLeftRef = React.useRef<HTMLDivElement>(null);
+  const limitRightRef = React.useRef<HTMLDivElement>(null);
   const extruderRef = React.useRef<HTMLDivElement>(null);
   const extruderShadowRef = React.useRef<HTMLDivElement>(null);
 
@@ -15,21 +17,32 @@ function App() {
         return;
       }
 
-      const left =
-        e.pageX / parseFloat(getComputedStyle(extruderRef.current).fontSize);
-      const width =
-        document.body.clientWidth /
-        parseFloat(getComputedStyle(extruderRef.current).fontSize);
+      if (limitLeftRef.current === null) {
+        return;
+      }
 
-      extruderRef.current.style.left =
-        Math.min(Math.max(left, 17.5), width - 17.5) + 'rem';
+      if (limitRightRef.current === null) {
+        return;
+      }
+
+      const rect = extruderRef.current.getBoundingClientRect();
+      const limitLeftRect = limitLeftRef.current.getBoundingClientRect();
+      const limitRightRect = limitRightRef.current.getBoundingClientRect();
+
+      const left =
+        Math.min(
+          Math.max(e.x, limitLeftRect.right + rect.width / 2),
+          limitRightRect.left - rect.width / 2,
+        ) + 'px';
+
+      extruderRef.current.style.left = left;
+
       setTimeout(() => {
         if (extruderShadowRef.current === null) {
           return;
         }
 
-        extruderShadowRef.current.style.left =
-          Math.min(Math.max(left, 17.5), width - 17.5) + 'rem';
+        extruderShadowRef.current.style.left = left;
       }, 50);
     });
   }, []);
@@ -59,9 +72,15 @@ function App() {
       <div style={{ gridArea: 'd' }} />
 
       <div style={{ gridArea: 'e' }} />
-      <div style={{ gridArea: 'f', background: printerColor }} />
+      <div
+        ref={limitLeftRef}
+        style={{ gridArea: 'f', background: printerColor }}
+      />
       <div style={{ gridArea: 'g' }} />
-      <div style={{ gridArea: 'h', background: printerColor }} />
+      <div
+        ref={limitRightRef}
+        style={{ gridArea: 'h', background: printerColor }}
+      />
       <div style={{ gridArea: 'i' }} />
 
       <div style={{ gridArea: 'j', background: printerColor }} />
