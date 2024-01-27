@@ -2,17 +2,26 @@ import React from 'react';
 import Form from './Form';
 
 function App() {
-  const ref = React.useRef<HTMLDivElement>(null);
+  const extruderRef = React.useRef<HTMLDivElement>(null);
+  const extruderShadowRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     document.addEventListener('mousemove', function (e) {
-      if (ref.current === null) {
+      if (extruderRef.current === null) {
         return;
       }
 
-      let left = e.pageX;
-      ref.current.style.left =
+      const left = e.pageX;
+      extruderRef.current.style.left =
         Math.min(Math.max(left, 350), document.body.clientWidth - 350) + 'px';
+      setTimeout(() => {
+        if (extruderShadowRef.current === null) {
+          return;
+        }
+
+        extruderShadowRef.current.style.left =
+          Math.min(Math.max(left, 350), document.body.clientWidth - 350) + 'px';
+      }, 50);
     });
   }, []);
 
@@ -30,22 +39,42 @@ function App() {
           gridTemplateColumns: '100px 100px 1fr 100px 100px',
         }}
       >
-        <div style={{ gridArea: 'a', background: 'lightgray' }} />
-        <div style={{ gridArea: 'b', background: 'black' }} />
-        <div style={{ gridArea: 'c', background: 'lightgray' }} />
-        <div style={{ gridArea: 'd', background: 'black' }} />
-        <div style={{ gridArea: 'e', background: 'lightgray' }} />
+        <div style={{ gridArea: 'a' }} />
+        <div style={{ gridArea: 'b', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'c' }} />
+        <div style={{ gridArea: 'd', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'e' }} />
 
-        <div style={{ gridArea: 'f', background: 'black' }} />
+        <div style={{ gridArea: 'f', background: '#3c3c3c' }} />
 
-        <div style={{ gridArea: 'g', background: 'lightgray' }} />
-        <div style={{ gridArea: 'h', background: 'black' }} />
-        <div style={{ gridArea: 'i', background: 'lightgray' }} />
-        <div style={{ gridArea: 'j', background: 'black' }} />
-        <div style={{ gridArea: 'k', background: 'lightgray' }} />
+        <div style={{ gridArea: 'g' }} />
+        <div style={{ gridArea: 'h', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'i' }} />
+        <div style={{ gridArea: 'j', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'k' }} />
 
         <div
-          ref={ref}
+          ref={extruderShadowRef}
+          style={{
+            display: 'grid',
+            position: 'absolute',
+            gridTemplateAreas: `
+              'a a a'
+              'b c d'
+            `,
+            gridTemplateRows: '300px 100px',
+            gridTemplateColumns: '100px 100px 100px',
+            transform: 'translate(-50%, 0)',
+          }}
+        >
+          <div style={{ gridArea: 'a', background: 'lime' }} />
+          <div style={{ gridArea: 'b' }} />
+          <div style={{ gridArea: 'c', background: 'lime' }} />
+          <div style={{ gridArea: 'd' }} />
+        </div>
+
+        <div
+          ref={extruderRef}
           style={{
             display: 'grid',
             position: 'absolute',
@@ -62,6 +91,19 @@ function App() {
           <div style={{ gridArea: 'b' }} />
           <div style={{ gridArea: 'c', background: 'grey' }} />
           <div style={{ gridArea: 'd' }} />
+
+          <h1
+            style={{
+              position: 'absolute',
+              margin: 0,
+              left: '150px',
+              top: '150px',
+              transform: 'translate(-50%, -50%)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            3D EasyLapse
+          </h1>
         </div>
       </div>
       <div
@@ -75,21 +117,21 @@ function App() {
           gridTemplateColumns: '100px 100px 300px 1fr 300px 100px 100px',
         }}
       >
-        <div style={{ gridArea: 'a', background: 'lightgray' }} />
-        <div style={{ gridArea: 'b', background: 'black' }} />
-        <div style={{ gridArea: 'c', background: 'lightgray' }} />
+        <div style={{ gridArea: 'a' }} />
+        <div style={{ gridArea: 'b', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'c' }} />
         <div style={{ gridArea: 'd' }}>
           <Form />
         </div>
-        <div style={{ gridArea: 'e', background: 'lightgray' }} />
-        <div style={{ gridArea: 'f', background: 'black' }} />
-        <div style={{ gridArea: 'g', background: 'lightgray' }} />
+        <div style={{ gridArea: 'e' }} />
+        <div style={{ gridArea: 'f', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'g' }} />
 
-        <div style={{ gridArea: 'h', background: 'lightgray' }} />
-        <div style={{ gridArea: 'i', background: 'black' }} />
-        <div style={{ gridArea: 'j', background: 'lightgray' }} />
-        <div style={{ gridArea: 'k', background: 'black' }} />
-        <div style={{ gridArea: 'l', background: 'lightgray' }} />
+        <div style={{ gridArea: 'h' }} />
+        <div style={{ gridArea: 'i', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'j' }} />
+        <div style={{ gridArea: 'k', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'l' }} />
       </div>
       <div
         style={{
@@ -98,7 +140,7 @@ function App() {
           gridTemplateColumns: '1fr',
         }}
       >
-        <div style={{ background: 'black' }} />
+        <div style={{ background: '#3c3c3c' }} />
       </div>
     </>
   );

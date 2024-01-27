@@ -57,7 +57,6 @@ function Form() {
 
   return (
     <form>
-      <h1>3D EasyLapse</h1>
       <fieldset>
         <legend>G-code file</legend>
         <p>
