@@ -1,184 +1,106 @@
-import React, { ChangeEvent, MouseEvent } from 'react';
-import { CustomTimelapse, TimelapseSettings } from './CustomTimelapse';
+import React from 'react';
+import Form from './Form';
 
 function App() {
-  const timelapseSettingsKey = 'timelapse-settings';
+  const ref = React.useRef<HTMLDivElement>(null);
 
-  const timelapseSettingsDefault: TimelapseSettings = {
-    displayTime: 5000,
-    displayPosX: 110,
-    displayPosY: 220,
+  React.useEffect(() => {
+    document.addEventListener('mousemove', function (e) {
+      if (ref.current === null) {
+        return;
+      }
 
-    retractionAmmount: 5,
-    retractionSpeedIn: 2100,
-    retractionSpeedOut: 3000,
-  };
-
-  const [timelapseSettings, _setTimelapseSettings] =
-    React.useState<TimelapseSettings>(
-      JSON.parse(localStorage.getItem(timelapseSettingsKey) ?? 'null') ??
-        timelapseSettingsDefault,
-    );
-
-  const setTimelapseSettings = (timelapseSettings: TimelapseSettings) => {
-    _setTimelapseSettings(timelapseSettings);
-    localStorage.setItem(
-      timelapseSettingsKey,
-      JSON.stringify(timelapseSettings),
-    );
-  };
-
-  const [file, setFile] = React.useState<File>();
-
-  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    setFile(event.target.files![0]);
-  };
-
-  const handleDownload = async (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    if (file) {
-      const gcode = await file.text();
-      const modifiedGcode = new CustomTimelapse().execute(
-        gcode,
-        timelapseSettings,
-      );
-      const blob = new Blob([modifiedGcode], { type: 'plain/text' });
-
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `3DEasyLapse_${file.name}`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-    }
-  };
+      let left = e.pageX;
+      ref.current.style.left =
+        Math.min(Math.max(left, 350), document.body.clientWidth - 350) + 'px';
+    });
+  }, []);
 
   return (
-    <div>
-      <form>
-        <h1>3D EasyLapse</h1>
-        <fieldset>
-          <legend>G-code file</legend>
-          <p>
-            <input type="file" onChange={handleFileUpload} />
-          </p>
-        </fieldset>
-        <fieldset>
-          <legend>Display</legend>
-          <p>
-            <label>
-              Time:{' '}
-              <input
-                type="number"
-                value={timelapseSettings.displayTime}
-                onChange={(el) => {
-                  setTimelapseSettings({
-                    ...timelapseSettings,
-                    displayTime: el.target.valueAsNumber,
-                  });
-                }}
-              />{' '}
-              ms
-            </label>
-          </p>
-          <p>
-            <label>
-              Position X:{' '}
-              <input
-                type="number"
-                value={timelapseSettings.displayPosX}
-                onChange={(el) => {
-                  setTimelapseSettings({
-                    ...timelapseSettings,
-                    displayPosX: el.target.valueAsNumber,
-                  });
-                }}
-              />
-            </label>{' '}
-            <label>
-              Y:{' '}
-              <input
-                type="number"
-                value={timelapseSettings.displayPosY}
-                onChange={(el) => {
-                  setTimelapseSettings({
-                    ...timelapseSettings,
-                    displayPosY: el.target.valueAsNumber,
-                  });
-                }}
-              />{' '}
-              mm
-            </label>
-          </p>
-        </fieldset>
-        <fieldset>
-          <legend>Retraction</legend>
-          <p>
-            <label>
-              Ammount:{' '}
-              <input
-                type="number"
-                value={timelapseSettings.retractionAmmount}
-                min={0}
-                onChange={(el) => {
-                  setTimelapseSettings({
-                    ...timelapseSettings,
-                    retractionAmmount: el.target.valueAsNumber,
-                  });
-                }}
-              />{' '}
-              mm
-            </label>
-          </p>
-          <p>
-            <label>
-              Speed in:{' '}
-              <input
-                type="number"
-                value={timelapseSettings.retractionSpeedIn}
-                min={0}
-                onChange={(el) => {
-                  setTimelapseSettings({
-                    ...timelapseSettings,
-                    retractionSpeedIn: el.target.valueAsNumber,
-                  });
-                }}
-              />
-            </label>{' '}
-            <label>
-              out:{' '}
-              <input
-                type="number"
-                value={timelapseSettings.retractionSpeedOut}
-                min={0}
-                onChange={(el) => {
-                  setTimelapseSettings({
-                    ...timelapseSettings,
-                    retractionSpeedOut: el.target.valueAsNumber,
-                  });
-                }}
-              />{' '}
-              mm/min
-            </label>
-          </p>
-        </fieldset>
-        <p>
-          <input
-            type="reset"
-            onClick={() => {
-              if (window.confirm('Are you sure you wanna reset the fields?')) {
-                setTimelapseSettings(timelapseSettingsDefault);
-              }
-            }}
-          ></input>{' '}
-          <button onClick={handleDownload} disabled={!file}>
-            Download Modified File
-          </button>
-        </p>
-      </form>
-    </div>
+    <>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateAreas: `
+            'a b c d e'
+            'f f f f f'
+            'g h i j k'
+          `,
+          gridTemplateRows: '100px 100px 200px',
+          gridTemplateColumns: '100px 100px 1fr 100px 100px',
+        }}
+      >
+        <div style={{ gridArea: 'a', background: 'lightgray' }} />
+        <div style={{ gridArea: 'b', background: 'black' }} />
+        <div style={{ gridArea: 'c', background: 'lightgray' }} />
+        <div style={{ gridArea: 'd', background: 'black' }} />
+        <div style={{ gridArea: 'e', background: 'lightgray' }} />
+
+        <div style={{ gridArea: 'f', background: 'black' }} />
+
+        <div style={{ gridArea: 'g', background: 'lightgray' }} />
+        <div style={{ gridArea: 'h', background: 'black' }} />
+        <div style={{ gridArea: 'i', background: 'lightgray' }} />
+        <div style={{ gridArea: 'j', background: 'black' }} />
+        <div style={{ gridArea: 'k', background: 'lightgray' }} />
+
+        <div
+          ref={ref}
+          style={{
+            display: 'grid',
+            position: 'absolute',
+            gridTemplateAreas: `
+              'a a a'
+              'b c d'
+            `,
+            gridTemplateRows: '300px 100px',
+            gridTemplateColumns: '100px 100px 100px',
+            transform: 'translate(-50%, 0)',
+          }}
+        >
+          <div style={{ gridArea: 'a', background: 'grey' }} />
+          <div style={{ gridArea: 'b' }} />
+          <div style={{ gridArea: 'c', background: 'grey' }} />
+          <div style={{ gridArea: 'd' }} />
+        </div>
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateAreas: `
+            'a b c d e f g'
+            'h i j j j k l'
+          `,
+          gridTemplateRows: '1fr 100px',
+          gridTemplateColumns: '100px 100px 300px 1fr 300px 100px 100px',
+        }}
+      >
+        <div style={{ gridArea: 'a', background: 'lightgray' }} />
+        <div style={{ gridArea: 'b', background: 'black' }} />
+        <div style={{ gridArea: 'c', background: 'lightgray' }} />
+        <div style={{ gridArea: 'd' }}>
+          <Form />
+        </div>
+        <div style={{ gridArea: 'e', background: 'lightgray' }} />
+        <div style={{ gridArea: 'f', background: 'black' }} />
+        <div style={{ gridArea: 'g', background: 'lightgray' }} />
+
+        <div style={{ gridArea: 'h', background: 'lightgray' }} />
+        <div style={{ gridArea: 'i', background: 'black' }} />
+        <div style={{ gridArea: 'j', background: 'lightgray' }} />
+        <div style={{ gridArea: 'k', background: 'black' }} />
+        <div style={{ gridArea: 'l', background: 'lightgray' }} />
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateRows: '200px',
+          gridTemplateColumns: '1fr',
+        }}
+      >
+        <div style={{ background: 'black' }} />
+      </div>
+    </>
   );
 }
 
