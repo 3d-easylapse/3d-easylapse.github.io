@@ -31,14 +31,22 @@ function App() {
         style={{
           display: 'grid',
           gridTemplateAreas: `
+            'o o o o o'
+            'l m m m n'
             'a b c d e'
             'f f f f f'
             'g h i j k'
           `,
-          gridTemplateRows: '100px 100px 200px',
+          gridTemplateRows: '100px 100px 300px 100px 300px',
           gridTemplateColumns: '100px 100px 1fr 100px 100px',
         }}
       >
+        <div style={{ gridArea: '0' }} />
+
+        <div style={{ gridArea: 'l' }} />
+        <div style={{ gridArea: 'm', background: '#3c3c3c' }} />
+        <div style={{ gridArea: 'n' }} />
+
         <div style={{ gridArea: 'a' }} />
         <div style={{ gridArea: 'b', background: '#3c3c3c' }} />
         <div style={{ gridArea: 'c' }} />
@@ -62,9 +70,10 @@ function App() {
               'a a a'
               'b c d'
             `,
+            top:'600px',
             gridTemplateRows: '300px 100px',
             gridTemplateColumns: '100px 100px 100px',
-            transform: 'translate(-50%, 0)',
+            transform: 'translate(-50%, -50%)',
           }}
         >
           <div style={{ gridArea: 'a', background: 'lime' }} />
@@ -82,9 +91,10 @@ function App() {
               'a a a'
               'b c d'
             `,
+            top: '600px',
             gridTemplateRows: '300px 100px',
             gridTemplateColumns: '100px 100px 100px',
-            transform: 'translate(-50%, 0)',
+            transform: 'translate(-50%, -50%)',
           }}
         >
           <div style={{ gridArea: 'a', background: 'grey' }} />
