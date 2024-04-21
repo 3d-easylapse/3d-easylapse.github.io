@@ -50,11 +50,11 @@ function App() {
   }, []);
 
   return (
+    <div style={{padding:'5rem'}}>
     <div
       style={{
         display: 'grid',
         gridTemplateAreas: `
-            ' a  a  a  a  a  a  a'
             ' b  c  c  c  c  c  d'
             ' e  f  g  g  g  h  i'
             ' j  j  j  j  j  j  j'
@@ -63,11 +63,10 @@ function App() {
             ' w  x  y  y  y  z aa'
             'ab ab ac ac ac ad ad'
           `,
-        gridTemplateRows: '5rem 5rem 15rem 5rem 15rem 1fr 5rem 10rem',
+        gridTemplateRows: '5rem 15rem 5rem 15rem 1fr 5rem 10rem',
         gridTemplateColumns: '5rem 5rem 10rem 1fr 10rem 5rem 5rem',
       }}
     >
-      <div style={{ gridArea: 'a' }} />
 
       <div style={{ gridArea: 'b' }} />
       <div style={{ gridArea: 'c', background: printerColor }} />
@@ -231,6 +230,7 @@ function App() {
           </a>
         </h1>
       </div>
+    </div>
     </div>
   );
 }
