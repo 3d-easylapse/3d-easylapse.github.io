@@ -183,7 +183,7 @@ function App() {
             gridTemplateRows: '15rem 5rem',
             gridTemplateColumns: '5rem 5rem 5rem',
             transform: 'translate(-50%, -50%)',
-            left: '17.5rem',
+            left: '22.5rem',
           }}
         >
           <div style={{ gridArea: 'a', background: extruderShadowColor }} />
@@ -205,7 +205,7 @@ function App() {
             gridTemplateRows: '15rem 5rem',
             gridTemplateColumns: '5rem 5rem 5rem',
             transform: 'translate(-50%, -50%)',
-            left: '17.5rem',
+            left: '22.5rem',
           }}
         >
           <div style={{ gridArea: 'a', background: extruderColor }} />
