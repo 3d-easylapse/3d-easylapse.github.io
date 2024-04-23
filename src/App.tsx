@@ -135,11 +135,11 @@ function App() {
               <p>
                 Use it to modify the G-code of your 3D models and make your 3D
                 printer stop at the end of each layer. This is useful for
-                recoding those fancy 3D print time-lapses.
+                recording those fancy 3D print time-lapses.
               </p>
               <p>
                 If you want to capture time-lapses using just your phone without
-                any additional hardware, feel free to download my app!
+                any additional hardware, download my app!
               </p>
             </div>
             <div style={{ position: 'relative', gridArea: 'b' }}>
