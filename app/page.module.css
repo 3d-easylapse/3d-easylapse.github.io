@@ -1,3 +1,49 @@
 .main {
-  background-color: gray;
+  display: flex;
+  min-height: 100vh;
+}
+
+.left {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+.left > div:nth-child(2) {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.title {
+  font-size: 4em;
+  text-align: center;
+}
+
+.title > mark {
+  color: #319795;
+  background-color: transparent;
+}
+
+.subtitle {
+  font-size: 1.2em;
+  font-weight: 300;
+}
+
+.disclaimer {
+  font-size: 0.75em;
+  font-weight: 200;
+}
+
+.appStoreBadges {
+  display: flex;
+  gap: 1rem;
+}
+
+.right {
+  flex-grow: 1;
+  background-color: #9AE6B4;
 }

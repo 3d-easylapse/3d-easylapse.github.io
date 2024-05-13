@@ -1,0 +1,10 @@
+.bottomBar {
+  display: flex;
+  height: 6rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottomBar > a {
+  text-decoration: none;
+}
