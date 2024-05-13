@@ -1,5 +1,10 @@
-import { Heading } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
+import Left from "./left";
 
 export default function Home() {
-  return <Heading>Hello world!</Heading>;
+  return (
+    <HStack minHeight="100vh" align="stretch">
+      <Left />
+    </HStack>
+  );
 }
