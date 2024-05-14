@@ -3,12 +3,14 @@
 import {
   HStack,
   Heading,
+  Icon,
   Image,
   Link,
   Mark,
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { FaGithub, FaEnvelope, FaYoutube, FaInstagram } from "react-icons/fa6";
 
 function Mid() {
   return (
@@ -58,6 +60,23 @@ function Mid() {
             src="ios-badge.png"
             alt="App Store download button"
           />
+        </Link>
+      </HStack>
+      <HStack gap={2} >
+        <Link
+          href="https://github.com/3d-easylapse/3d-easylapse.github.io"
+          target="_blank"
+        >
+          <Icon as={FaGithub} boxSize={6} />
+        </Link>
+        <Link href="http://www.youtube.com/@icarodlima" target="_blank">
+          <Icon as={FaYoutube} boxSize={6} />
+        </Link>
+        <Link href="https://www.instagram.com/icarodlima" target="_blank">
+          <Icon as={FaInstagram} boxSize={6} />
+        </Link>
+        <Link href="mailto:3d.easylapse@gmail.com" target="_blank">
+          <Icon as={FaEnvelope} boxSize={6} />
         </Link>
       </HStack>
     </VStack>
