@@ -5,7 +5,7 @@ import Bottom from "./bottom";
 
 function Left() {
   return (
-    <VStack flexGrow={1} align="stretch">
+    <VStack flexGrow={1} align="stretch" overflowX="clip">
       <Top />
       <Mid />
       <Bottom />
