@@ -1,3 +1,5 @@
+"use client";
+
 import {
   HStack,
   Heading,
@@ -44,11 +46,11 @@ function Mid() {
         </Link>
         <Link
           flex={1}
-          /*onClick={() =>
+          onClick={() =>
             alert(
               "iOS app is under construction. Keep calm, we are almost there!"
             )
-          }*/
+          }
         >
           <Image
             maxHeight={16}
